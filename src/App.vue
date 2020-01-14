@@ -1,6 +1,6 @@
 <template>
-  <div id="app">
-    <h1>Hi</h1>
+  <div id="app" class="container">
+    <h1>Todo-list app</h1>
     <InputBar />
     <TodoList />
   </div>
@@ -19,4 +19,13 @@ export default {
 </script>
 
 <style>
+* {
+  box-sizing: border-box;
+}
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  border: 1px solid red;
+}
 </style>
