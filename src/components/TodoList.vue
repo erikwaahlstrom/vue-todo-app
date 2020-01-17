@@ -1,7 +1,7 @@
 <template>
-  <div class="todolist-container">
+  <div>
     <input
-      text="text"
+      type="text"
       class="todo-input"
       placeholder="What needs to be done?"
       v-model="newTodo"
@@ -9,7 +9,18 @@
     />
     <ul>
       <div v-for="(todo, index) in todos" :key="todo.id" class="todo-item">
-        <li>{{todo.title}}</li>
+        <li v-if="!todo.isEditing" @dblclick="editTodo(todo)">{{todo.title}}</li>
+
+        <input
+          v-else
+          type="text"
+          v-model="todo.title"
+          v-focus
+          @blur="saveEdit(todo)"
+          @keyup.enter="saveEdit(todo)"
+          @keyup.esc="cancelEdit(todo)"
+        />
+
         <div class="remove-item" @click="removeTodo(index)">&times;</div>
       </div>
     </ul>
@@ -22,19 +33,30 @@ export default {
     return {
       newTodo: "",
       idForTodo: 3,
+      beforeEditCache: "",
       todos: [
         {
           id: 1,
           title: "Finish vue screencast",
-          completed: false
+          completed: false,
+          isEditing: false
         },
         {
           id: 2,
           title: "Make food",
-          completed: false
+          completed: false,
+          isEditing: false
         }
       ]
     };
+  },
+  directives: {
+    focus: {
+      // directive definition
+      inserted: function(el) {
+        el.focus();
+      }
+    }
   },
   methods: {
     addTodo() {
@@ -44,13 +66,24 @@ export default {
       this.todos.push({
         id: this.idForTodo,
         title: this.newTodo,
-        completed: false
+        completed: false,
+        isEditing: false
       });
 
       this.newTodo = "";
       this.idForTodo++;
     },
-    // V-for skapar ett index för varje element som skapas. Klick event tar sedan med sig denna unika index till removeTodo funktionen. Där väljer vi ut vilken array som vi ska redigera och sedan vilket object i ordningen som ska tas bort.
+    editTodo(todo) {
+      this.beforeEditCache = todo.title;
+      todo.isEditing = true;
+    },
+    saveEdit(todo) {
+      todo.isEditing = false;
+    },
+    cancelEdit(todo) {
+      todo.title = this.beforeEditCache;
+      todo.isEditing = false;
+    },
     removeTodo(index) {
       console.log(index);
       this.todos.splice(index, 1);
@@ -60,10 +93,6 @@ export default {
 </script>
 
 <style>
-.todolist-container {
-  border: 2px solid blue;
-}
-
 .todo-item {
   font-size: 20px;
   margin-bottom: 14px;
