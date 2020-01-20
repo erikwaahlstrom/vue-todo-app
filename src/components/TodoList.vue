@@ -9,14 +9,18 @@
     />
     <ul>
       <div v-for="(todo, index) in todos" :key="todo.id" class="todo-item">
-        <li v-if="!todo.isEditing" @dblclick="editTodo(todo)">{{todo.title}}</li>
+        <input type="checkbox" v-model="todo.completed" />
+        <li
+          :class="{completed : todo.completed}"
+          v-if="!todo.isEditing"
+          @dblclick="editTodo(todo)"
+        >{{todo.title}}</li>
 
         <input
           v-else
           type="text"
           v-model="todo.title"
           v-focus
-          @blur="saveEdit(todo)"
           @keyup.enter="saveEdit(todo)"
           @keyup.esc="cancelEdit(todo)"
         />
@@ -24,6 +28,12 @@
         <div class="remove-item" @click="removeTodo(index)">&times;</div>
       </div>
     </ul>
+    <div class="extra-container">
+      <label>
+        <input type="checkbox" />Check all
+      </label>
+      {{remaining}} items left
+    </div>
   </div>
 </template>
 
@@ -77,7 +87,11 @@ export default {
       this.beforeEditCache = todo.title;
       todo.isEditing = true;
     },
+    // Till skillnad från addTodo() behöver vi inte få tag i 'this.newTodo'. Här skicker vi med todo objektet. Därefter returnerar vi => sätter todo.title till det senaste värdet vi ändrade innan vi valde att edit.
     saveEdit(todo) {
+      if (todo.title.trim().length == "") {
+        todo.title = this.beforeEditCache;
+      }
       todo.isEditing = false;
     },
     cancelEdit(todo) {
@@ -93,6 +107,13 @@ export default {
 </script>
 
 <style>
+.extra-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid grey;
+}
+
 .todo-item {
   font-size: 20px;
   margin-bottom: 14px;
@@ -115,5 +136,10 @@ export default {
 
 .remove-item:hover {
   background-color: #e8e8e8;
+}
+
+.completed {
+  text-decoration: line-through;
+  color: grey;
 }
 </style>
