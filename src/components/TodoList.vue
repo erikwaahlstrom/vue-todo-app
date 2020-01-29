@@ -8,8 +8,10 @@
       @keyup.enter="addTodo"
     />
     <ul>
-      <div v-for="(todo) in todos" :key="todo.id" class="todo-item">
-        <li v-if="!todo.isEditing" @dblclick="editTodo(todo)">{{todo.title}}</li>
+      <div v-for="todo in todos" :key="todo.id" class="todo-item">
+        <li v-if="!todo.isEditing" @dblclick="editTodo(todo)">
+          {{ todo.title }}
+        </li>
 
         <input
           v-else
@@ -22,10 +24,8 @@
       </div>
     </ul>
     <div class="extra-container">
-      <label>
-        <input type="checkbox" />Check all
-      </label>
-      {{remaining}} items left
+      <label> <input type="checkbox" />Check all </label>
+      {{ remaining }} items left
     </div>
   </div>
 </template>
