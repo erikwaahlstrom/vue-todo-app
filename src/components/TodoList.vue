@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="todo-list">
     <input
       type="text"
       class="todo-input"
@@ -8,13 +8,8 @@
       @keyup.enter="addTodo"
     />
     <ul>
-      <div v-for="(todo, index) in todos" :key="todo.id" class="todo-item">
-        <input type="checkbox" v-model="todo.completed" />
-        <li
-          :class="{completed : todo.completed}"
-          v-if="!todo.isEditing"
-          @dblclick="editTodo(todo)"
-        >{{todo.title}}</li>
+      <div v-for="(todo) in todos" :key="todo.id" class="todo-item">
+        <li v-if="!todo.isEditing" @dblclick="editTodo(todo)">{{todo.title}}</li>
 
         <input
           v-else
@@ -24,8 +19,6 @@
           @keyup.enter="saveEdit(todo)"
           @keyup.esc="cancelEdit(todo)"
         />
-
-        <div class="remove-item" @click="removeTodo(index)">&times;</div>
       </div>
     </ul>
     <div class="extra-container">
@@ -97,11 +90,11 @@ export default {
     cancelEdit(todo) {
       todo.title = this.beforeEditCache;
       todo.isEditing = false;
-    },
-    removeTodo(index) {
-      console.log(index);
-      this.todos.splice(index, 1);
     }
+    // removeTodo(index) {
+    //   console.log(index);
+    //   this.todos.splice(index, 1);
+    // }
   }
 };
 </script>
@@ -121,6 +114,9 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  /* nya */
+  border: 1px solid red;
+  height: 100px;
 }
 
 .todo-input {
@@ -130,16 +126,16 @@ export default {
   margin-bottom: 16px;
 }
 
+.todo-list > ul {
+  margin: 0;
+  padding: 0;
+}
+
 .remove-item {
   cursor: pointer;
 }
 
 .remove-item:hover {
   background-color: #e8e8e8;
-}
-
-.completed {
-  text-decoration: line-through;
-  color: grey;
 }
 </style>
