@@ -1,32 +1,20 @@
 <template>
-  <div class="todo-list">
+  <div>
     <input
       type="text"
-      class="todo-input"
       placeholder="What needs to be done?"
       v-model="newTodo"
       @keyup.enter="addTodo"
     />
-    <ul>
-      <div v-for="todo in todos" :key="todo.id" class="todo-item">
-        <li v-if="!todo.isEditing" @dblclick="editTodo(todo)">
-          {{ todo.title }}
-        </li>
-
-        <input
-          v-else
-          type="text"
-          v-model="todo.title"
-          v-focus
-          @keyup.enter="saveEdit(todo)"
-          @keyup.esc="cancelEdit(todo)"
-        />
+    <ul class="list-body">
+      <div v-for="(todo, index) in todos" :key="index" class="swipe-btn-container">
+        <div class="swipe-btn-container-inner" :class="{'active': todo.toggled}">
+          <button class="swipe-btn" @click="removeTodo(index)">Trash</button>
+          <button class="swipe-btn" @click="closeItem(todo)">X</button>
+        </div>
+        <li class="swipe-list-item" @dblclick="btnActive(todo)">{{todo.title}}</li>
       </div>
     </ul>
-    <div class="extra-container">
-      <label> <input type="checkbox" />Check all </label>
-      {{ remaining }} items left
-    </div>
   </div>
 </template>
 
@@ -35,27 +23,28 @@ export default {
   data() {
     return {
       newTodo: "",
-      idForTodo: 3,
-      beforeEditCache: "",
+      idForTodo: 4,
       todos: [
         {
           id: 1,
           title: "Finish vue screencast",
-          completed: false,
-          isEditing: false
+          toggled: false
         },
         {
           id: 2,
           title: "Make food",
-          completed: false,
-          isEditing: false
+          toggled: false
+        },
+        {
+          id: 3,
+          title: "Check stuff",
+          toggled: false
         }
       ]
     };
   },
   directives: {
     focus: {
-      // directive definition
       inserted: function(el) {
         el.focus();
       }
@@ -66,76 +55,66 @@ export default {
       if (this.newTodo.trim().length == 0) {
         return;
       }
-      this.todos.push({
+      this.todos.unshift({
         id: this.idForTodo,
         title: this.newTodo,
         completed: false,
-        isEditing: false
+        toggled: false
       });
 
       this.newTodo = "";
       this.idForTodo++;
     },
-    editTodo(todo) {
-      this.beforeEditCache = todo.title;
-      todo.isEditing = true;
+    removeTodo(index) {
+      this.$delete(this.todos, index);
     },
-    // Till skillnad från addTodo() behöver vi inte få tag i 'this.newTodo'. Här skicker vi med todo objektet. Därefter returnerar vi => sätter todo.title till det senaste värdet vi ändrade innan vi valde att edit.
-    saveEdit(todo) {
-      if (todo.title.trim().length == "") {
-        todo.title = this.beforeEditCache;
-      }
-      todo.isEditing = false;
+    btnActive(todo) {
+      todo.toggled = true;
     },
-    cancelEdit(todo) {
-      todo.title = this.beforeEditCache;
-      todo.isEditing = false;
+    closeItem(todo) {
+      todo.toggled = false;
     }
-    // removeTodo(index) {
-    //   console.log(index);
-    //   this.todos.splice(index, 1);
-    // }
   }
 };
 </script>
 
 <style>
-.extra-container {
+.swipe-btn-container {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-top: 1px solid grey;
-}
-
-.todo-item {
-  font-size: 20px;
-  margin-bottom: 14px;
-  list-style: none;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  /* nya */
-  border: 1px solid red;
   height: 100px;
 }
 
-.todo-input {
-  width: 100%;
-  padding: 10px 18px;
-  font-size: 18px;
-  margin-bottom: 16px;
+.swipe-btn-container-inner {
+  display: flex;
+  width: 0px;
+  transition: 0.2s;
 }
 
-.todo-list > ul {
+.swipe-btn {
+  background-color: red;
+  border: none;
+  width: 100%;
+  height: 100%;
   margin: 0;
   padding: 0;
 }
 
-.remove-item {
-  cursor: pointer;
+.swipe-list-item {
+  height: 100%;
+  width: 100%;
+  border: 1px solid blue;
 }
 
-.remove-item:hover {
-  background-color: #e8e8e8;
+.active {
+  width: 50%;
+}
+
+.list-body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  list-style: none;
+  border: 1px solid red;
 }
 </style>
