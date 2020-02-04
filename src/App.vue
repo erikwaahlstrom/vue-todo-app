@@ -1,6 +1,5 @@
 <template>
-  <div id="app" class="container">
-    <h1>Todo-list app</h1>
+  <div id="app" class="app-container">
     <todo-list></todo-list>
   </div>
 </template>
@@ -23,8 +22,9 @@ body {
   padding: 0;
 }
 
-.container {
+.app-container {
+  font-family: "Montserrat", sans-serif;
   margin: 0 auto;
-  padding: 0;
+  padding: 2em;
 }
 </style>
