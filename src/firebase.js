@@ -11,5 +11,5 @@ const app = initializeApp({
   measurementId: "G-9K3LGTCKX7"
 });
 
-export const db = app.database();
-export const todosRef = db.ref("todos");
+export const db = app.firestore();
+export const todosCollection = db.collection("todos");
